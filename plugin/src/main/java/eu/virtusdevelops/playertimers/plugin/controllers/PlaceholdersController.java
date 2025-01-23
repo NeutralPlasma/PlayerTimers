@@ -55,6 +55,14 @@ public class PlaceholdersController extends PlaceholderExpansion {
                     return "invalid";
                 }
             }
+            case "status":{
+                var timer = timerController.getTimer(player.getUniqueId(), splitted[1]);
+                if(timer != null){
+                    return timer.isPaused() ? "paused" : "running";
+                }else{
+                    return "invalid";
+                }
+            }
         }
 
         return null;

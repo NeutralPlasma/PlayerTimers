@@ -3,7 +3,7 @@ package eu.virtusdevelops.playertimers.plugin;
 import eu.virtusdevelops.playertimers.api.PlayerTimersAPI;
 import eu.virtusdevelops.playertimers.api.controllers.TimersController;
 import eu.virtusdevelops.playertimers.core.controllers.TimerControllerImpl;
-import eu.virtusdevelops.playertimers.plugin.commands.CommandsManager;
+import eu.virtusdevelops.playertimers.plugin.commands.CommandsRegistry;
 import eu.virtusdevelops.playertimers.plugin.controllers.PlaceholdersController;
 import eu.virtusdevelops.playertimers.core.storage.SQLStorage;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -12,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.minecraft.extras.MinecraftExceptionHandler;
@@ -24,7 +23,6 @@ import static net.kyori.adventure.text.Component.text;
 
 public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.playertimers.api.PlayerTimers {
 
-    private BukkitAudiences bukkitAudiences;
     private MinecraftHelp<CommandSender> minecraftHelp;
 
     private TimerControllerImpl timerController;
@@ -55,27 +53,19 @@ public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.
 
 
     private void setupCommands(){
+        var bukkitAudiences = BukkitAudiences.create(this);
         final LegacyPaperCommandManager<CommandSender> manager = LegacyPaperCommandManager.createNative(
                 this,
                 ExecutionCoordinator.simpleCoordinator()
         );
 
         if (manager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
-            // Register Brigadier mappings for rich completions;
             manager.registerBrigadier();
         } else if (manager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
-            // Use Paper async completions API (see Javadoc for why we don't use this with Brigadier)
             manager.registerAsynchronousCompletions();
         }
 
-
-
-
-        this.bukkitAudiences = BukkitAudiences.create(this);
-
-
-
-        MinecraftExceptionHandler.create(this.bukkitAudiences::sender)
+        MinecraftExceptionHandler.create(bukkitAudiences::sender)
                 .defaultHandlers()
                 .decorator(
                         component -> text()
@@ -87,26 +77,20 @@ public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.
                 )
                 .registerTo(manager);
 
-
         this.minecraftHelp = MinecraftHelp.<CommandSender>builder()
                 .commandManager(manager)
-                .audienceProvider(this.bukkitAudiences()::sender)
+                .audienceProvider(bukkitAudiences::sender)
                 .commandPrefix("/ptimers help")
                 .messageProvider(MinecraftHelp.captionMessageProvider(
                         manager.captionRegistry(),
                         ComponentCaptionFormatter.miniMessage()
                 ))
                 .build();
-
         manager.captionRegistry().registerProvider(MinecraftHelp.defaultCaptionsProvider());
 
-
-        new CommandsManager(this, manager);
+        new CommandsRegistry(this, manager);
     }
 
-    public @NonNull BukkitAudiences bukkitAudiences() {
-        return this.bukkitAudiences;
-    }
 
     public MinecraftHelp<CommandSender> getMinecraftHelp() {
         return minecraftHelp;

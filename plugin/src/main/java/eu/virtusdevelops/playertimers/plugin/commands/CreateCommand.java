@@ -16,12 +16,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CreateCommand implements AbstractCommand {
-    private PlayerTimers plugin;
     private TimersController timerController;
 
     @Override
     public void registerCommand(@NonNull PlayerTimers plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
-        this.plugin = plugin;
         timerController = plugin.getTimersController();
         annotationParser.parse(this);
     }

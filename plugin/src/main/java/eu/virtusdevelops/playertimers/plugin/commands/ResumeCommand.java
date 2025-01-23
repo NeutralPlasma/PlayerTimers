@@ -18,12 +18,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ResumeCommand implements AbstractCommand {
-    private PlayerTimers plugin;
     private TimersController timerController;
 
     @Override
     public void registerCommand(@NonNull PlayerTimers plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
-        this.plugin = plugin;
         timerController = plugin.getTimersController();
         annotationParser.parse(this);
     }
@@ -72,7 +70,7 @@ public class ResumeCommand implements AbstractCommand {
         var timers = timerController.getPlayerTimers(oPlayer.getUniqueId());
         if(timers == null)
             return Collections.emptyList();
-        return timers.stream().map(PlayerTimer::getName).filter(it -> ((String) it).contains(input)).collect(Collectors.toList());
+        return timers.stream().filter(PlayerTimer::isPaused).map(PlayerTimer::getName).filter(it -> ((String) it ).contains(input)).collect(Collectors.toList());
 
     }
 }

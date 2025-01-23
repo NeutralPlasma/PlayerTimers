@@ -9,7 +9,7 @@ import org.incendo.cloud.annotations.AnnotationParser;
 import java.util.Arrays;
 import java.util.List;
 
-public class CommandsManager {
+public class CommandsRegistry {
 
 
     private static final List<AbstractCommand> COMMANDS = Arrays.asList(
@@ -28,7 +28,7 @@ public class CommandsManager {
     private final PlayerTimers plugin;
     private final AnnotationParser<CommandSender> annotationParser;
 
-    public CommandsManager(
+    public CommandsRegistry(
             final @NonNull PlayerTimers plugin,
             final @NonNull CommandManager<CommandSender> manager
     ){
