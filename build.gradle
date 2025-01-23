@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.gradleup.shadow' version '8.3.5'
+    id 'de.eldoria.plugin-yml.bukkit' version "0.6.0"
 }
 
 group = 'eu.virtusdevelops'
@@ -42,6 +42,24 @@ java {
 }
 
 
+bukkit {
+    name = "PlayerTimers"
+    main = "eu.virtusdevelops.playertimers.PlayerTimers"
+    apiVersion = "1.20"
+    foliaSupported = true
+    authors = ["NeutralPlasma"]
+    depend = ["PlaceholderAPI"]
+    libraries = [
+            "org.incendo:cloud-core:2.0.0",
+            "org.incendo:cloud-annotations:2.0.0",
+            "org.incendo:cloud-paper:2.0.0-beta.10",
+            "org.incendo:cloud-minecraft-extras:2.0.0-beta.10",
+            "net.kyori:adventure-platform-bukkit:4.3.4",
+            "com.zaxxer:HikariCP:5.0.1"
+    ]
+}
+
+
 processResources {
     def props = [version: version]
     inputs.properties props
@@ -52,9 +70,3 @@ processResources {
 }
 
 
-shadowJar {
-    relocate("org.incendo.cloud-core", "eu.virtusdevelops.playertimers.cloud-core")
-    relocate("org.incendo.cloud-annotations", "eu.virtusdevelops.playertimers.cloud-annotations")
-    relocate("org.incendo.cloud-paper", "eu.virtusdevelops.playertimers.cloud-paper")
-    relocate("org.incendo.cloud-minecraft-extras", "eu.virtusdevelops.playertimers.cloud-minecraft-extras")
-}
