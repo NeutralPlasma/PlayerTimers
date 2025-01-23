@@ -1,0 +1,8 @@
+name: PlayerTimers
+version: '${version}'
+main: eu.virtusdevelops.playertimers.PlayerTimers
+api-version: '1.20'
+
+
+depend:
+  - PlaceholderAPI

@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '8.3.5'
+}
+
+group = 'eu.virtusdevelops'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/groups/public/"
+    }
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+
+    maven { url 'https://jitpack.io' }
+    maven{ url "https://repo.auxilor.io/repository/maven-public/" }
+}
+
+dependencies {
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    compileOnly group: 'me.clip', name: 'placeholderapi', version: '2.11.6'
+
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
+    implementation "net.kyori:adventure-platform-bukkit:4.3.4"
+    implementation 'org.incendo:cloud-core:2.0.0'
+    implementation 'org.incendo:cloud-annotations:2.0.0'
+    implementation 'org.incendo:cloud-paper:2.0.0-beta.10'
+    implementation 'org.incendo:cloud-minecraft-extras:2.0.0-beta.10'
+
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+
+shadowJar {
+    relocate("org.incendo.cloud-core", "eu.virtusdevelops.playertimers.cloud-core")
+    relocate("org.incendo.cloud-annotations", "eu.virtusdevelops.playertimers.cloud-annotations")
+    relocate("org.incendo.cloud-paper", "eu.virtusdevelops.playertimers.cloud-paper")
+    relocate("org.incendo.cloud-minecraft-extras", "eu.virtusdevelops.playertimers.cloud-minecraft-extras")
+}
