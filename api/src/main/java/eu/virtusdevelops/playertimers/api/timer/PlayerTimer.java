@@ -12,6 +12,7 @@ public interface PlayerTimer {
      * Retrieves the unique identifier (UUID) of the associated player.
      *
      * @return the UUID of the player associated with this timer.
+     * @since 1
      */
     UUID getPlayerID();
 
@@ -19,6 +20,7 @@ public interface PlayerTimer {
      * Retrieves the unique identifier (UUID) for this entity.
      *
      * @return the UUID associated with this entity.
+     * @since 1
      */
     UUID getId();
 
@@ -26,6 +28,7 @@ public interface PlayerTimer {
      * Retrieves the name of the timer.
      *
      * @return the name of the timer as a String.
+     * @since 1
      */
     String getName();
 
@@ -33,6 +36,7 @@ public interface PlayerTimer {
      * Retrieves the remaining duration of the timer in seconds.
      *
      * @return the remaining duration of the timer as a long value, representing the number of seconds left.
+     * @since 1
      */
     long getDuration();
 
@@ -40,6 +44,7 @@ public interface PlayerTimer {
      * Determines whether the timer executes ticks even when the player is offline.
      *
      * @return true if the timer processes ticks while the associated player is offline; false otherwise.
+     * @since 1
      */
     boolean isOfflineTick();
 
@@ -47,6 +52,7 @@ public interface PlayerTimer {
      * Checks if the timer has completed its duration.
      *
      * @return true if the timer's remaining duration is less than or equal to zero; false otherwise.
+     * @since 1
      */
     boolean isFinished();
 
@@ -55,6 +61,7 @@ public interface PlayerTimer {
      * Timer only gets executed after it has finished its countdown, see {@link #isFinished()}
      *
      * @return true if the timer has been executed; false otherwise.
+     * @since 1
      */
     boolean isExecuted();
 
@@ -64,6 +71,7 @@ public interface PlayerTimer {
      *
      * @return the Player instance associated with this timer, or null if the player
      *         is not online or cannot be found.
+     * @since 1
      */
     Player getPlayer();
 
@@ -71,6 +79,7 @@ public interface PlayerTimer {
      * Retrieves the offline representation of the player associated with this timer.
      *
      * @return the OfflinePlayer instance representing the associated player.
+     * @since 1
      */
     OfflinePlayer getOfflinePlayer();
 
@@ -80,6 +89,7 @@ public interface PlayerTimer {
      * are typically executed when the timer finishes.
      *
      * @return a list of strings, each representing a command associated with the timer.
+     * @since 1
      */
     List<String> getCommands();
 
@@ -88,6 +98,7 @@ public interface PlayerTimer {
      *
      * @return the start time of the timer as a long value, representing the
      *         time in milliseconds since the epoch (January 1, 1970, 00:00:00 GMT).
+     * @since 1
      */
     long getStartTime();
 
@@ -96,6 +107,14 @@ public interface PlayerTimer {
      *
      * @return the end time of the timer as a long value, representing the
      *         time in milliseconds since the epoch (January 1, 1970, 00:00:00 GMT).
+     * @since 1
      */
     long getEndTime();
+
+    /**
+     * Checks if the timer is currently paused.
+     *
+     * @return true if the timer is in a paused state; false otherwise.
+     */
+    boolean isPaused();
 }

@@ -14,6 +14,7 @@ public class PlayerTimerImpl implements PlayerTimer {
     private final String name;
     private boolean executed = false;
     private boolean offlineTick = false;
+    private boolean paused = false;
     private List<String> commands;
 
     private Player player;
@@ -21,7 +22,7 @@ public class PlayerTimerImpl implements PlayerTimer {
 
     private boolean updated = false;
 
-    public PlayerTimerImpl(UUID timerID, UUID playerID, long startTime, long endTime, long duration, String name, boolean offlineTick, List<String> commands) {
+    public PlayerTimerImpl(UUID timerID, UUID playerID, long startTime, long endTime, long duration, String name, boolean offlineTick, boolean paused, List<String> commands) {
         this.timerID = timerID;
         this.playerID = playerID;
         this.startTime = startTime;
@@ -30,11 +31,13 @@ public class PlayerTimerImpl implements PlayerTimer {
         this.name = name;
         this.offlineTick = offlineTick;
         this.commands = commands;
+        this.paused = paused;
         this.player = Bukkit.getPlayer(playerID);
         this.oPlayer = Bukkit.getOfflinePlayer(playerID);
     }
 
     public void tick(){
+        if(paused) return;
         if(!offlineTick &&  Bukkit.getPlayer(playerID) == null) return;
         updated = true;
         duration--;
@@ -138,5 +141,16 @@ public class PlayerTimerImpl implements PlayerTimer {
 
     public void setUpdated(boolean updated) {
         this.updated = updated;
+    }
+
+    @Override
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        if(paused != this.paused)
+            this.updated = true;
+        this.paused = paused;
     }
 }

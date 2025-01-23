@@ -20,7 +20,9 @@ public class CommandsManager {
             new AddDurationCommand(),
             new RemoveDurationCommand(),
             new CancelCommand(),
-            new StopCommand()
+            new StopCommand(),
+            new PauseCommand(),
+            new ResumeCommand()
     );
 
     private final PlayerTimers plugin;

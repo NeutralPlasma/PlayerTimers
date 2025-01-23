@@ -60,11 +60,14 @@ public class CheckCommand implements AbstractCommand {
                             .append(command);
                     index++;
                 }
+
+
                 sender.sendMessage(TextUtil.MM.deserialize("<dark_gray>└"
                         + "<green>" + timer.getName() + "\n"
                         + "  <dark_gray>├─ <yellow>Duration: <green>" + timer.getDuration() + "\n"
                         + "  <dark_gray>├─ <yellow>Start time: <green>" + timer.getStartTime() + "\n"
                         + "  <dark_gray>├─ <yellow>End time: <green>" + timer.getEndTime() + "\n"
+                        + "  <dark_gray>├─ <yellow>Status: " + (timer.isPaused() ? "<red>Paused" : "<green>Running") + "\n"
                         + "  <dark_gray>└─ <yellow>Commands:"
                         + commands
                 ));

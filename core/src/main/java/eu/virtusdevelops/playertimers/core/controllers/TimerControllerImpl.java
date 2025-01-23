@@ -74,6 +74,7 @@ public class TimerControllerImpl implements TimersController {
                 duration,
                 timerName,
                 offlineTick,
+                false,
                 new ArrayList<>()
         );
 
@@ -233,5 +234,27 @@ public class TimerControllerImpl implements TimersController {
             return nTimer;
         }
         return null;
+    }
+
+    @Override
+    public boolean pauseTimer(PlayerTimer timer) {
+        if(timer instanceof PlayerTimerImpl nTimer){
+            if(nTimer.isPaused()) return false;
+            nTimer.setPaused(true);
+            saveTimer(nTimer, true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean resumeTimer(PlayerTimer timer) {
+        if(timer instanceof PlayerTimerImpl nTimer){
+            if(!nTimer.isPaused()) return false;
+            nTimer.setPaused(false);
+            saveTimer(nTimer, true);
+            return true;
+        }
+        return false;
     }
 }

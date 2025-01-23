@@ -50,7 +50,8 @@ public class SQLStorage {
                     end_time BIGINT DEFAULT 0,
                     duration BIGINT NOT NULL,
                     offline_tick TINYINT(1) DEFAULT 0,
-                    executed TINYINT(1) DEFAULT 0
+                    executed TINYINT(1) DEFAULT 0,
+                    paused TINYINT(1) DEFAULT 0
                 );
                 """
             );
@@ -114,6 +115,7 @@ public class SQLStorage {
                         resultSet.getLong("duration"),
                         resultSet.getString("timer_name"),
                         resultSet.getBoolean("offline_tick"),
+                        resultSet.getBoolean("paused"),
                         new ArrayList<>()
                 );
                 timer.getCommands().addAll(getTimerCommands(connection, timer.getId()));
@@ -165,8 +167,8 @@ public class SQLStorage {
             PreparedStatement statement = connection.prepareStatement(
             """
                 INSERT INTO
-                    pt_timers(id, timer_name, player_id, start_time, end_time, duration, executed, offline_tick)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    pt_timers(id, timer_name, player_id, start_time, end_time, duration, executed, offline_tick, paused)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
             );
             statement.setString(1, timer.getId().toString());
@@ -177,6 +179,7 @@ public class SQLStorage {
             statement.setLong(6, timer.getDuration());
             statement.setBoolean(7, timer.isExecuted());
             statement.setBoolean(8, timer.isOfflineTick());
+            statement.setBoolean(9, timer.isPaused());
 
             statement.execute();
 
@@ -198,7 +201,8 @@ public class SQLStorage {
                             end_time = ?,
                             duration = ?,
                             executed = ?,
-                            offline_tick = ?
+                            offline_tick = ?,
+                            paused = ?
                         WHERE
                             id = ?
                         """
@@ -207,7 +211,8 @@ public class SQLStorage {
             statement.setLong(2, timer.getDuration());
             statement.setBoolean(3, timer.isExecuted());
             statement.setBoolean(4, timer.isOfflineTick());
-            statement.setString(5, timer.getId().toString());
+            statement.setBoolean(5, timer.isPaused());
+            statement.setString(6, timer.getId().toString());
             statement.execute();
             if(updateCommands){
                 removeTimerCommands(timer, connection);
