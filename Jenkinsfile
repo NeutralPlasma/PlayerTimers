@@ -25,6 +25,7 @@ pipeline {
 					sh '''
 						export NEXUS1_USERNAME=${NEXUS1_USERNAME}
 						export NEXUS1_PASSWORD=${NEXUS1_PASSWORD}
+						./gradlew clean
 						./gradlew build --info  --stacktrace
 					'''
 				}
