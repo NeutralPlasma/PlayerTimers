@@ -37,7 +37,7 @@ pipeline {
 
 	post {
 		always {
-			archiveArtifacts artifacts: '**/build/libs/PlayerTimers-*.jar', allowEmptyArchive: true
+			archiveArtifacts artifacts: '**/plugin/build/libs/PlayerTimers-*.jar', allowEmptyArchive: true
 		}
 	}
 }
