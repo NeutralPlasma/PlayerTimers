@@ -28,7 +28,7 @@ public class ResumeCommand implements AbstractCommand {
         annotationParser.parse(this);
     }
 
-    @Permission("playertimers.command.cancel")
+    @Permission("playertimers.command.resume")
     @Command("ptimers resume <player> <name>")
     @CommandDescription("Pauses the timer")
     public void cancelCommand(

@@ -26,7 +26,7 @@ public class RemoveDurationCommand implements AbstractCommand {
         annotationParser.parse(this);
     }
 
-    @Permission("playertimers.command.addtime")
+    @Permission("playertimers.command.removetime")
     @Command("ptimers removetime <player> <name> <duration>")
     @CommandDescription("Adds time to the timer")
     public void removeTimeCommand(
