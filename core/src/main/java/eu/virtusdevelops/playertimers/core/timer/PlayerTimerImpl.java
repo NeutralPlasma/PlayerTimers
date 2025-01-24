@@ -46,11 +46,13 @@ public class PlayerTimerImpl implements PlayerTimer {
         }
     }
 
+    @Override
     public void addTime(long duration){
         this.duration+=duration;
         updated = true;
     }
 
+    @Override
     public void removeTime(long duration){
         this.duration-=duration;
         updated = true;
@@ -152,5 +154,19 @@ public class PlayerTimerImpl implements PlayerTimer {
         if(paused != this.paused)
             this.updated = true;
         this.paused = paused;
+    }
+
+    @Override
+    public boolean pause() {
+        if(paused) return false;
+        paused = true;
+        return true;
+    }
+
+    @Override
+    public boolean resume() {
+        if(!paused) return false;
+        paused = false;
+        return true;
     }
 }

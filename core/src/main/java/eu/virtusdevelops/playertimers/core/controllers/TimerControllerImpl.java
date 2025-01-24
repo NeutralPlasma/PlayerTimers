@@ -19,8 +19,8 @@ public class TimerControllerImpl implements TimersController {
     private final Map<UUID, List<PlayerTimerImpl>> toExecute = new HashMap<>();
 
 
-    private BukkitTask tickingTask;
-    private BukkitTask saveTask;
+    private final BukkitTask tickingTask;
+    private final BukkitTask saveTask;
 
     public TimerControllerImpl(JavaPlugin plugin, SQLStorage storage) {
         this.plugin = plugin;
@@ -196,25 +196,6 @@ public class TimerControllerImpl implements TimersController {
         return false;
     }
 
-    @Override
-    public PlayerTimer addTime(PlayerTimer timer, long duration) {
-        if(timer instanceof PlayerTimerImpl nTimer){
-            nTimer.addTime(duration);
-            saveTimer(nTimer, false);
-            return nTimer;
-        }
-        return null;
-    }
-
-    @Override
-    public PlayerTimer removeTime(PlayerTimer timer, long duration) {
-        if(timer instanceof PlayerTimerImpl nTimer){
-            nTimer.removeTime(duration);
-            saveTimer(nTimer, false);
-            return nTimer;
-        }
-        return null;
-    }
 
     @Override
     public PlayerTimer addCommands(PlayerTimer timer, List<String> commands) {
@@ -236,25 +217,26 @@ public class TimerControllerImpl implements TimersController {
         return null;
     }
 
+
+    @Override
+    public PlayerTimer addTime(PlayerTimer timer, long duration) {
+        timer.addTime(duration);
+        return timer;
+    }
+
+    @Override
+    public PlayerTimer removeTime(PlayerTimer timer, long duration) {
+        timer.removeTime(duration);
+        return timer;
+    }
+
     @Override
     public boolean pauseTimer(PlayerTimer timer) {
-        if(timer instanceof PlayerTimerImpl nTimer){
-            if(nTimer.isPaused()) return false;
-            nTimer.setPaused(true);
-            saveTimer(nTimer, true);
-            return true;
-        }
-        return false;
+        return timer.pause();
     }
 
     @Override
     public boolean resumeTimer(PlayerTimer timer) {
-        if(timer instanceof PlayerTimerImpl nTimer){
-            if(!nTimer.isPaused()) return false;
-            nTimer.setPaused(false);
-            saveTimer(nTimer, true);
-            return true;
-        }
-        return false;
+        return timer.resume();
     }
 }

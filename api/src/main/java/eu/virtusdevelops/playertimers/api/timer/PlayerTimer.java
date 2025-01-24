@@ -117,4 +117,36 @@ public interface PlayerTimer {
      * @return true if the timer is in a paused state; false otherwise.
      */
     boolean isPaused();
+
+    /**
+     * Adds the specified duration to the timer's remaining time.
+     *
+     * @param duration the amount of time to be added, in seconds
+     */
+    void addTime(long duration);
+
+
+    /**
+     * Reduces the remaining duration of the timer by the specified amount.
+     *
+     * @param duration the amount of time to remove, in seconds
+     */
+    void removeTime(long duration);
+
+
+    /**
+     * Pauses the timer, freezing its current state and stopping the countdown.
+     * If the timer is already paused, this method will not perform any additional actions.
+     *
+     * @return true if the timer was successfully paused; false if the timer was already paused.
+     */
+    boolean pause();
+
+
+    /**
+     * Resumes the timer, allowing it to continue its countdown if it was previously paused.
+     *
+     * @return true if the timer was successfully resumed; false if the timer was not paused.
+     */
+    boolean resume();
 }
