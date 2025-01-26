@@ -22,7 +22,8 @@ public class CommandsRegistry {
             new CancelCommand(),
             new StopCommand(),
             new PauseCommand(),
-            new ResumeCommand()
+            new ResumeCommand(),
+            new TemplateCommand()
     );
 
     private final PlayerTimers plugin;

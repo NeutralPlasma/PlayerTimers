@@ -2,6 +2,7 @@ package eu.virtusdevelops.playertimers.core.controllers;
 
 import eu.virtusdevelops.playertimers.api.controllers.TimersController;
 import eu.virtusdevelops.playertimers.api.timer.PlayerTimer;
+import eu.virtusdevelops.playertimers.core.storage.PlayerTimerDao;
 import eu.virtusdevelops.playertimers.core.storage.SQLStorage;
 import eu.virtusdevelops.playertimers.core.timer.PlayerTimerImpl;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -15,6 +16,7 @@ import java.util.*;
 public class TimerControllerImpl implements TimersController {
     private final JavaPlugin plugin;
     private final SQLStorage storage;
+    private final PlayerTimerDao timerStorage;
     private final Map<UUID, List<PlayerTimerImpl>> playerTimers = new HashMap<>();
     private final Map<UUID, List<PlayerTimerImpl>> toExecute = new HashMap<>();
 
@@ -25,6 +27,7 @@ public class TimerControllerImpl implements TimersController {
     public TimerControllerImpl(JavaPlugin plugin, SQLStorage storage) {
         this.plugin = plugin;
         this.storage = storage;
+        this.timerStorage = storage.getPlayerTimerDao();
         loadTimers();
 
 
@@ -41,10 +44,10 @@ public class TimerControllerImpl implements TimersController {
 
 
     private void loadTimers(){
-        var temp = storage.getTimers();
+        var temp = timerStorage.getActiveTimers();
         plugin.getLogger().info("Loaded " + temp.values().stream().map(List::size).toList().stream().mapToInt(Integer::intValue).sum() + " timers");
-        for(var timer : temp.keySet()){
-            playerTimers.put(timer, temp.get(timer));
+        for(var player : temp.keySet()){
+            playerTimers.put(player, temp.get(player));
         }
         temp.clear();
     }
@@ -86,7 +89,7 @@ public class TimerControllerImpl implements TimersController {
 
         // sql save
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            storage.addTimer(timer);
+            timerStorage.save(timer);
         });
         return timer;
     }
@@ -95,7 +98,7 @@ public class TimerControllerImpl implements TimersController {
         for(var timers : playerTimers.values()){
             for(var timer : timers){
                 if(timer.isUpdated()){
-                    storage.updateTimer(timer, false);
+                    timerStorage.save(timer, false);
                     timer.setUpdated(false);
                 }
             }
@@ -105,7 +108,7 @@ public class TimerControllerImpl implements TimersController {
 
     public void saveTimer(PlayerTimerImpl timer, boolean updateCommands){
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            storage.updateTimer(timer, updateCommands);
+            timerStorage.save(timer, updateCommands);
             timer.setUpdated(false);
         });
     }

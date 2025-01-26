@@ -44,7 +44,15 @@ public class PlaceholdersController extends PlaceholderExpansion {
                 if(timer != null){
                     return timer.getDuration() + "";
                 }else{
-                    return "invalid";
+                    return "0";
+                }
+            }
+            case "total":{
+                var timer = timerController.getTimer(player.getUniqueId(), splitted[1]);
+                if(timer != null){
+                    return timer.getTotalDuration() + "";
+                }else{
+                    return "0";
                 }
             }
             case "parsed":{
@@ -52,7 +60,14 @@ public class PlaceholdersController extends PlaceholderExpansion {
                 if(timer != null){
                     return DurationFormatUtils.formatDuration(timer.getDuration() * 1000, "mm'm' ss's'", false);
                 }else{
-                    return "invalid";
+                    return "0";
+                }
+            }case "totalparsed":{
+                var timer = timerController.getTimer(player.getUniqueId(), splitted[1]);
+                if(timer != null){
+                    return DurationFormatUtils.formatDuration(timer.getTotalDuration() * 1000, "mm'm' ss's'", false);
+                }else{
+                    return "0";
                 }
             }
             case "status":{
@@ -60,7 +75,7 @@ public class PlaceholdersController extends PlaceholderExpansion {
                 if(timer != null){
                     return timer.isPaused() ? "paused" : "running";
                 }else{
-                    return "invalid";
+                    return "0";
                 }
             }
         }

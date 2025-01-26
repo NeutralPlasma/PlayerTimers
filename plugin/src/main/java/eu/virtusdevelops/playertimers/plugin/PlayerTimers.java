@@ -2,6 +2,7 @@ package eu.virtusdevelops.playertimers.plugin;
 
 import eu.virtusdevelops.playertimers.api.PlayerTimersAPI;
 import eu.virtusdevelops.playertimers.api.controllers.TimersController;
+import eu.virtusdevelops.playertimers.core.controllers.TemplateController;
 import eu.virtusdevelops.playertimers.core.controllers.TimerControllerImpl;
 import eu.virtusdevelops.playertimers.plugin.commands.CommandsRegistry;
 import eu.virtusdevelops.playertimers.plugin.controllers.PlaceholdersController;
@@ -26,6 +27,7 @@ public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.
     private MinecraftHelp<CommandSender> minecraftHelp;
 
     private TimerControllerImpl timerController;
+    private TemplateController templateController;
     private SQLStorage storage;
 
     @Override
@@ -37,6 +39,7 @@ public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.
             // throw error
         }
         timerController = new TimerControllerImpl(this, storage);
+        templateController = new TemplateController(this);
         setupCommands();
 
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
@@ -44,6 +47,7 @@ public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.
         }
 
         PlayerTimersAPI.load(this);
+
     }
 
     @Override
@@ -100,5 +104,9 @@ public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.
     @Override
     public TimersController getTimersController() {
         return timerController;
+    }
+
+    public TemplateController getTemplateController(){
+        return templateController;
     }
 }

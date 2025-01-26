@@ -1,6 +1,5 @@
 package eu.virtusdevelops.playertimers.api;
 
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus;
 
 public final class PlayerTimersAPI {
@@ -18,7 +17,7 @@ public final class PlayerTimersAPI {
      * @return The version as an integer.
      */
     public static int getVersion() {
-        return 1;
+        return 2;
     }
 
     /**

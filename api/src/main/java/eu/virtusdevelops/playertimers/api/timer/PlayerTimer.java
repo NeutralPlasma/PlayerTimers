@@ -41,6 +41,15 @@ public interface PlayerTimer {
     long getDuration();
 
     /**
+     * returns total max time it ever had
+     *
+     * @return the total duration of the timer as a long value, representing the initial duration
+     *         of the timer before any modifications such as pause or time extensions.
+     * @since 2
+     */
+    long getTotalDuration();
+
+    /**
      * Determines whether the timer executes ticks even when the player is offline.
      *
      * @return true if the timer processes ticks while the associated player is offline; false otherwise.
@@ -149,4 +158,22 @@ public interface PlayerTimer {
      * @return true if the timer was successfully resumed; false if the timer was not paused.
      */
     boolean resume();
+
+    /**
+     * Adds a command to the timer's list of commands. These commands are
+     * typically executed when the timer finishes.
+     *
+     * @param command the command to add, represented as a String
+     * @since 2
+     */
+    void addCommand(String command);
+
+
+    /**
+     * Removes a command from the timer's list of commands at the specified index.
+     *
+     * @param index the position of the command in the list to be removed, where the index starts from 0
+     * @since 2
+     */
+    void removeCommand(int index);
 }

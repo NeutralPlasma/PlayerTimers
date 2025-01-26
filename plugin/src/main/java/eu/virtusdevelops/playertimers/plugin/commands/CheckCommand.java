@@ -63,6 +63,7 @@ public class CheckCommand implements AbstractCommand {
                 sender.sendMessage(TextUtil.MM.deserialize("<dark_gray>└"
                         + "<green>" + timer.getName() + "\n"
                         + "  <dark_gray>├─ <yellow>Duration: <green>" + timer.getDuration() + "\n"
+                        + "  <dark_gray>├─ <yellow>Total duration: <green>" + timer.getTotalDuration() + "\n"
                         + "  <dark_gray>├─ <yellow>Start time: <green>" + timer.getStartTime() + "\n"
                         + "  <dark_gray>├─ <yellow>End time: <green>" + timer.getEndTime() + "\n"
                         + "  <dark_gray>├─ <yellow>Status: " + (timer.isPaused() ? "<red>Paused" : "<green>Running") + "\n"
@@ -95,8 +96,10 @@ public class CheckCommand implements AbstractCommand {
                 sender.sendMessage(TextUtil.MM.deserialize("<dark_gray>└"
                         + "<green>" + timer.getName() + "\n"
                         + "  <dark_gray>├─ <yellow>Duration: <green>" + timer.getDuration() + "\n"
+                        + "  <dark_gray>├─ <yellow>Total duration: <green>" + timer.getTotalDuration() + "\n"
                         + "  <dark_gray>├─ <yellow>Start time: <green>" + timer.getStartTime() + "\n"
                         + "  <dark_gray>├─ <yellow>End time: <green>" + timer.getEndTime() + "\n"
+                        + "  <dark_gray>├─ <yellow>Status: " + "<red>Waiting execution" + "\n"
                         + "  <dark_gray>└─ <yellow>Commands:"
                         + commands
                 ));

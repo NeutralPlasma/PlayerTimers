@@ -11,6 +11,7 @@ import java.util.UUID;
 public class PlayerTimerImpl implements PlayerTimer {
     private final UUID timerID, playerID;
     private long startTime, endTime, duration;
+    private long totalTime;
     private final String name;
     private boolean executed = false;
     private boolean offlineTick = false;
@@ -32,9 +33,26 @@ public class PlayerTimerImpl implements PlayerTimer {
         this.offlineTick = offlineTick;
         this.commands = commands;
         this.paused = paused;
+        this.totalTime = duration;
         this.player = Bukkit.getPlayer(playerID);
         this.oPlayer = Bukkit.getOfflinePlayer(playerID);
     }
+
+    public PlayerTimerImpl(UUID timerID, UUID playerID, long startTime, long endTime, long duration, long totalTime, String name, boolean offlineTick, boolean paused, List<String> commands) {
+        this.timerID = timerID;
+        this.playerID = playerID;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.duration = duration;
+        this.name = name;
+        this.offlineTick = offlineTick;
+        this.commands = commands;
+        this.paused = paused;
+        this.totalTime = totalTime;
+        this.player = Bukkit.getPlayer(playerID);
+        this.oPlayer = Bukkit.getOfflinePlayer(playerID);
+    }
+
 
     public void tick(){
         if(paused) return;
@@ -49,12 +67,14 @@ public class PlayerTimerImpl implements PlayerTimer {
     @Override
     public void addTime(long duration){
         this.duration+=duration;
+        this.totalTime+=duration;
         updated = true;
     }
 
     @Override
     public void removeTime(long duration){
         this.duration-=duration;
+        this.totalTime-=duration;
         updated = true;
     }
 
@@ -168,5 +188,23 @@ public class PlayerTimerImpl implements PlayerTimer {
         if(!paused) return false;
         paused = false;
         return true;
+    }
+
+    @Override
+    public long getTotalDuration() {
+        return totalTime;
+    }
+
+    @Override
+    public void addCommand(String command) {
+        this.updated = true;
+        this.commands.add(command);
+    }
+
+    @Override
+    public void removeCommand(int index) {
+        if(index < 0 || index >= commands.size()) return;
+        this.updated = true;
+        this.commands.remove(index);
     }
 }
