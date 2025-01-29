@@ -15,7 +15,6 @@ import java.util.*;
 
 public class TimerControllerImpl implements TimersController {
     private final JavaPlugin plugin;
-    private final SQLStorage storage;
     private final PlayerTimerDao timerStorage;
     private final Map<UUID, List<PlayerTimerImpl>> playerTimers = new HashMap<>();
     private final Map<UUID, List<PlayerTimerImpl>> toExecute = new HashMap<>();
@@ -24,10 +23,9 @@ public class TimerControllerImpl implements TimersController {
     private final BukkitTask tickingTask;
     private final BukkitTask saveTask;
 
-    public TimerControllerImpl(JavaPlugin plugin, SQLStorage storage) {
+    public TimerControllerImpl(JavaPlugin plugin, PlayerTimerDao timerStorage) {
         this.plugin = plugin;
-        this.storage = storage;
-        this.timerStorage = storage.getPlayerTimerDao();
+        this.timerStorage = timerStorage;
         loadTimers();
 
 

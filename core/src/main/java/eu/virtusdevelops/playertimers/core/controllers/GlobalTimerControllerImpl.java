@@ -2,32 +2,48 @@ package eu.virtusdevelops.playertimers.core.controllers;
 
 import eu.virtusdevelops.playertimers.api.controllers.GlobalTimersController;
 import eu.virtusdevelops.playertimers.api.timer.GlobalTimer;
+import eu.virtusdevelops.playertimers.api.timer.LinkedPlayer;
+import eu.virtusdevelops.playertimers.core.storage.GlobalTimerDao;
+import eu.virtusdevelops.playertimers.core.timer.GlobalTimerImpl;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class GlobalTimerControllerImpl implements GlobalTimersController {
 
-    private Map<UUID, GlobalTimer> activeTimers;
-    private Map<UUID, GlobalTimer> awaitingExecutionTimers;
+    private final Map<UUID, GlobalTimerImpl> activeTimers = new HashMap<>();
+
+    private final GlobalTimerDao globalTimerDao;
+    private final JavaPlugin javaPlugin;
 
     private final BukkitTask tickingTask;
     private final BukkitTask saveTask;
 
 
-    public GlobalTimerControllerImpl(JavaPlugin plugin){
+    public GlobalTimerControllerImpl(JavaPlugin plugin, GlobalTimerDao globalTimerDao){
+        this.javaPlugin = plugin;
+        this.globalTimerDao = globalTimerDao;
 
 
+        loadTimers();
 
         tickingTask = Bukkit.getScheduler().runTaskTimer(plugin, this::tickTimers, 0L, 20L);
         saveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this::saveAllTimers, 0L, 1200L);
 
+    }
+
+    private void loadTimers(){
+        var tempTimers = globalTimerDao.getActiveTimers();
+        if(tempTimers == null) return;
+
+        for(var timer : tempTimers.values()){
+
+            activeTimers.put(timer.getId(), timer);
+
+        }
     }
 
 
@@ -37,64 +53,74 @@ public class GlobalTimerControllerImpl implements GlobalTimersController {
         saveAllTimers();
     }
 
+    private final List<UUID> toRemove = new ArrayList<>();
 
-    private void tickTimers(){
+    private void tickTimers() {
 
-
-        // use iterator instead
-
-        for(Iterator<UUID> iterator = activeTimers.keySet().iterator(); iterator.hasNext();){
-            UUID uuid = iterator.next();
-            var timer = activeTimers.get(uuid);
+        // Use entrySet to avoid unnecessary multiple lookups
+        for (Map.Entry<UUID, GlobalTimerImpl> entry : activeTimers.entrySet()) {
+            GlobalTimerImpl timer = entry.getValue();
 
             timer.tick();
 
-            // check if finished then execute normal commands and move to awaiitng execution
-            if(timer.isFinished()){
-                timer.getCommands().forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
-                timer.finish();
-                iterator.remove();
-                awaitingExecutionTimers.put(uuid, timer);
+            // Check if finished, then execute normal commands and move to awaiting execution
+            if (timer.isFinished() && !timer.isExecuted()) {
+                timer.getCommands().forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.getCommand()));
+                timer.setExecuted(true);
             }
-        }
+
+            if (timer.isFinished() && timer.isExecuted()) {
+
+                if (timer.isPlayerExecuted()) {
+                    Bukkit.getScheduler().runTaskAsynchronously(javaPlugin, () -> saveTimer(timer));
+                    toRemove.add(timer.getId());
+                    continue;
+                }
 
 
-        for(Iterator<UUID> iterator = awaitingExecutionTimers.keySet().iterator(); iterator.hasNext();){
-            UUID uuid = iterator.next();
-            var timer = activeTimers.get(uuid);
+                Collection<LinkedPlayer> linkedPlayers = timer.getLinkedPlayers();
+                if (linkedPlayers == null) continue; // Safeguard against null collections
 
-
-
-            // check if finished then execute normal commands and move to awaiitng execution
-
-            for(var awaitingPlayer : timer.getLinkedPlayers()){
-                var player = awaitingPlayer.getPlayer();
-                if(player != null && player.isOnline()){
-                    timer.getCommands().forEach(command -> Bukkit.dispatchCommand(player, PlaceholderAPI.setPlaceholders(player, command)));
-                    timer.finish();
-                    iterator.remove();
-                    activeTimers.put(uuid, timer);
+                for (var awaitingPlayer : linkedPlayers) {
+                    var player = awaitingPlayer.getPlayer();
+                    if (player != null && player.isOnline()) {
+                        timer.getPlayerCommands().forEach(command ->
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlaceholderAPI.setPlaceholders(player, command.getCommand()))
+                        );
+                        awaitingPlayer.execute();
+                    }
                 }
             }
         }
+
+        for(var uuid : toRemove){
+            activeTimers.remove(uuid);
+        }
+        toRemove.clear();
+
     }
 
 
     private void saveAllTimers(){
-        // call the dao and do saving watever
+        for(var timer : activeTimers.values()){
+            if(!timer.isUpdated()) continue;
+            saveTimer(timer);
+        }
     }
 
+    private void saveTimer(GlobalTimerImpl timer){
+        globalTimerDao.save(timer, timer.isCommandsUpdated(), timer.isPlayersUpdated());
+        timer.setUpdated(false);
+        timer.setPlayersUpdated(false);
+        timer.setCommandsUpdated(false);
+    }
 
 
     @Override
     public List<GlobalTimer> getActiveTimers() {
-        return (List<GlobalTimer>) activeTimers.values();
+        return new ArrayList<>(activeTimers.values());
     }
 
-    @Override
-    public List<GlobalTimer> getAwaitingExecutionTimers() {
-        return (List<GlobalTimer>) awaitingExecutionTimers.values();
-    }
 
     @Override
     public GlobalTimer getTimer(String name) {
@@ -113,6 +139,13 @@ public class GlobalTimerControllerImpl implements GlobalTimersController {
 
     @Override
     public GlobalTimer createTimer(String name, long duration) {
-        return null;
+        var timer = new GlobalTimerImpl(UUID.randomUUID(), name, duration);
+        activeTimers.put(timer.getId(), timer);
+
+        Bukkit.getScheduler().runTaskAsynchronously(javaPlugin, () -> {
+            globalTimerDao.save(timer);
+        });
+
+        return timer;
     }
 }

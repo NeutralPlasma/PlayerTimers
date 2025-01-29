@@ -1,5 +1,6 @@
 package eu.virtusdevelops.playertimers.api;
 
+import eu.virtusdevelops.playertimers.api.controllers.GlobalTimersController;
 import eu.virtusdevelops.playertimers.api.controllers.TimersController;
 
 public interface PlayerTimers {
@@ -12,4 +13,11 @@ public interface PlayerTimers {
      */
     TimersController getTimersController();
 
+    /**
+     * Retrieves the GlobalTimersController instance associated with this PlayerTimers instance.
+     *
+     * @return the GlobalTimersController that provides methods to manage global timers.
+     * @since 2
+     */
+    GlobalTimersController getGlobalTimersController();
 }

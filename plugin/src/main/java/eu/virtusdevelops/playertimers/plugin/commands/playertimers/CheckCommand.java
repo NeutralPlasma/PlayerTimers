@@ -1,7 +1,8 @@
-package eu.virtusdevelops.playertimers.plugin.commands;
+package eu.virtusdevelops.playertimers.plugin.commands.playertimers;
 
 import eu.virtusdevelops.playertimers.api.controllers.TimersController;
-import eu.virtusdevelops.playertimers.plugin.PlayerTimers;
+import eu.virtusdevelops.playertimers.plugin.PlayerTimersPlugin;
+import eu.virtusdevelops.playertimers.plugin.commands.AbstractCommand;
 import eu.virtusdevelops.playertimers.plugin.utils.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -19,13 +20,13 @@ public class CheckCommand implements AbstractCommand {
     private TimersController timerController;
 
     @Override
-    public void registerCommand(@NonNull PlayerTimers plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
+    public void registerCommand(@NonNull PlayerTimersPlugin plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
         timerController = plugin.getTimersController();
         annotationParser.parse(this);
     }
 
     @Permission("playertimers.command.check")
-    @Command("ptimers check <player>")
+    @Command("timers player check <player>")
     @CommandDescription("Shows all active timers for user")
     public void helpCommand(
             final CommandSender sender,

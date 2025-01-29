@@ -1,6 +1,8 @@
 package eu.virtusdevelops.playertimers.plugin.commands;
 
-import eu.virtusdevelops.playertimers.plugin.PlayerTimers;
+import eu.virtusdevelops.playertimers.plugin.PlayerTimersPlugin;
+import eu.virtusdevelops.playertimers.plugin.commands.globaltimers.*;
+import eu.virtusdevelops.playertimers.plugin.commands.playertimers.*;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.CommandManager;
@@ -23,14 +25,26 @@ public class CommandsRegistry {
             new StopCommand(),
             new PauseCommand(),
             new ResumeCommand(),
-            new TemplateCommand()
+            new TemplateCommand(),
+
+            new AddDurationGlobalCommand(),
+            new AddTimerCommandGlobalCommand(),
+            new AddTimerPlayerCommandGlobalCommand(),
+            new CancelGlobalCommand(),
+            new CheckGlobalCommand(),
+            new CreateGlobalCommand(),
+            new PauseGlobalCommand(),
+            new RemoveDurationGlobalCommand(),
+            new ResumeGlobalCommand(),
+            new StopGlobalCommand(),
+            new LinkPlayerGlobalCommand()
     );
 
-    private final PlayerTimers plugin;
+    private final PlayerTimersPlugin plugin;
     private final AnnotationParser<CommandSender> annotationParser;
 
     public CommandsRegistry(
-            final @NonNull PlayerTimers plugin,
+            final @NonNull PlayerTimersPlugin plugin,
             final @NonNull CommandManager<CommandSender> manager
     ){
         this.plugin = plugin;

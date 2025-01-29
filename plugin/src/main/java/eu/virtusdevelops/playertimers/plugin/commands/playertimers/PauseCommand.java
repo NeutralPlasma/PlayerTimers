@@ -1,8 +1,9 @@
-package eu.virtusdevelops.playertimers.plugin.commands;
+package eu.virtusdevelops.playertimers.plugin.commands.playertimers;
 
 import eu.virtusdevelops.playertimers.api.controllers.TimersController;
 import eu.virtusdevelops.playertimers.api.timer.PlayerTimer;
-import eu.virtusdevelops.playertimers.plugin.PlayerTimers;
+import eu.virtusdevelops.playertimers.plugin.PlayerTimersPlugin;
+import eu.virtusdevelops.playertimers.plugin.commands.AbstractCommand;
 import eu.virtusdevelops.playertimers.plugin.utils.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -17,23 +18,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AddDurationCommand implements AbstractCommand {
+public class PauseCommand implements AbstractCommand {
     private TimersController timerController;
 
     @Override
-    public void registerCommand(@NonNull PlayerTimers plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
+    public void registerCommand(@NonNull PlayerTimersPlugin plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
         timerController = plugin.getTimersController();
         annotationParser.parse(this);
     }
 
-    @Permission("playertimers.command.addtime")
-    @Command("ptimers addtime <player> <name> <duration>")
-    @CommandDescription("Adds time to the timer")
-    public void addTimeCommand(
+    @Permission("playertimers.command.pause")
+    @Command("timers player pause <player> <name>")
+    @CommandDescription("Pauses the timer")
+    public void cancelCommand(
             final CommandSender sender,
             @Argument(value = "player", suggestions = "player") final String playerName,
-            @Argument(value = "name", suggestions = "timer_name") final String name,
-            @Argument("duration") final long duration
+            @Argument(value = "name", suggestions = "timer_name") final String name
     ){
 
 
@@ -43,14 +43,16 @@ public class AddDurationCommand implements AbstractCommand {
             return;
         }
 
-
         var timer = timerController.getTimer(oPlayer.getUniqueId(), name);
         if(timer == null){
             sender.sendMessage(TextUtil.MM.deserialize("<red>Invalid timer!"));
             return;
         }
-        timerController.addTime(timer, duration);
-        sender.sendMessage(TextUtil.MM.deserialize("<green>Updated timers time"));
+        if(timerController.pauseTimer(timer)){
+            sender.sendMessage(TextUtil.MM.deserialize("<green>Paused timer"));
+        }else{
+            sender.sendMessage(TextUtil.MM.deserialize("<red>Timer is already paused"));
+        }
     }
 
 
@@ -69,7 +71,7 @@ public class AddDurationCommand implements AbstractCommand {
         var timers = timerController.getPlayerTimers(oPlayer.getUniqueId());
         if(timers == null)
             return Collections.emptyList();
-        return timers.stream().map(PlayerTimer::getName).filter(it -> ((String) it).contains(input)).collect(Collectors.toList());
+        return timers.stream().filter(it -> !it.isPaused()).map(PlayerTimer::getName).filter(it -> ((String) it).contains(input)).collect(Collectors.toList());
 
     }
 }

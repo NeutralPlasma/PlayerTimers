@@ -1,8 +1,10 @@
-package eu.virtusdevelops.playertimers.plugin.commands;
+package eu.virtusdevelops.playertimers.plugin.commands.playertimers;
 
 import eu.virtusdevelops.playertimers.api.controllers.TimersController;
 import eu.virtusdevelops.playertimers.api.timer.PlayerTimer;
-import eu.virtusdevelops.playertimers.plugin.PlayerTimers;
+import eu.virtusdevelops.playertimers.core.controllers.TemplateController;
+import eu.virtusdevelops.playertimers.plugin.PlayerTimersPlugin;
+import eu.virtusdevelops.playertimers.plugin.commands.AbstractCommand;
 import eu.virtusdevelops.playertimers.plugin.utils.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -17,40 +19,46 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RemoveDurationCommand implements AbstractCommand {
+public class TemplateCommand implements AbstractCommand {
     private TimersController timerController;
+    private TemplateController templateController;
 
     @Override
-    public void registerCommand(@NonNull PlayerTimers plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
+    public void registerCommand(@NonNull PlayerTimersPlugin plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
         timerController = plugin.getTimersController();
+        templateController = plugin.getTemplateController();
         annotationParser.parse(this);
     }
 
-    @Permission("playertimers.command.removetime")
-    @Command("ptimers removetime <player> <name> <duration>")
-    @CommandDescription("Adds time to the timer")
-    public void removeTimeCommand(
+    @Permission("playertimers.command.stop")
+    @Command("timers player loadtemplate <player> <timer_name> <template_name>")
+    @CommandDescription("Cancels the timer (DOES execute commands)")
+    public void templateCommand(
             final CommandSender sender,
             @Argument(value = "player", suggestions = "player") final String playerName,
-            @Argument(value = "name", suggestions = "timer_name") final String name,
-            @Argument("duration") final long duration
+            @Argument(value = "timer_name", suggestions = "timer_name") final String timerName,
+            @Argument(value = "template_name", suggestions = "template_name") final String templateName
+
     ){
-
-
         var oPlayer = Bukkit.getOfflinePlayerIfCached(playerName);
         if(oPlayer == null){
             sender.sendMessage(TextUtil.MM.deserialize("<red>Invalid player!"));
             return;
         }
 
-
-        var timer = timerController.getTimer(oPlayer.getUniqueId(), name);
+        var timer = timerController.getTimer(oPlayer.getUniqueId(), timerName);
         if(timer == null){
             sender.sendMessage(TextUtil.MM.deserialize("<red>Invalid timer!"));
             return;
         }
-        timerController.removeTime(timer, duration);
-        sender.sendMessage(TextUtil.MM.deserialize("<green>Updated timers time"));
+
+        var template = templateController.loadTemplate(templateName);
+
+        timerController.addCommands(timer, template);
+
+        sender.sendMessage(TextUtil.MM.deserialize("<green>Loaded template"));
+
+
     }
 
 
@@ -71,5 +79,13 @@ public class RemoveDurationCommand implements AbstractCommand {
             return Collections.emptyList();
         return timers.stream().map(PlayerTimer::getName).filter(it -> ((String) it).contains(input)).collect(Collectors.toList());
 
+    }
+
+
+    @Suggestions("template_name")
+    public List<String> getTemplates(CommandContext<CommandSender> sender, String input){
+        var allTemplates = templateController.getAllTemplates();
+
+        return allTemplates.stream().filter(it -> it.contains(input)).collect(Collectors.toList());
     }
 }

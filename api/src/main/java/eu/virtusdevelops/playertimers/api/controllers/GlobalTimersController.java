@@ -9,7 +9,6 @@ public interface GlobalTimersController {
 
     List<GlobalTimer> getActiveTimers();
 
-    List<GlobalTimer> getAwaitingExecutionTimers();
 
     GlobalTimer getTimer(String name);
 

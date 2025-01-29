@@ -1,8 +1,9 @@
-package eu.virtusdevelops.playertimers.plugin.commands;
+package eu.virtusdevelops.playertimers.plugin.commands.playertimers;
 
 import eu.virtusdevelops.playertimers.api.controllers.TimersController;
 import eu.virtusdevelops.playertimers.api.timer.PlayerTimer;
-import eu.virtusdevelops.playertimers.plugin.PlayerTimers;
+import eu.virtusdevelops.playertimers.plugin.PlayerTimersPlugin;
+import eu.virtusdevelops.playertimers.plugin.commands.AbstractCommand;
 import eu.virtusdevelops.playertimers.plugin.utils.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -21,13 +22,13 @@ public class ResumeCommand implements AbstractCommand {
     private TimersController timerController;
 
     @Override
-    public void registerCommand(@NonNull PlayerTimers plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
+    public void registerCommand(@NonNull PlayerTimersPlugin plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
         timerController = plugin.getTimersController();
         annotationParser.parse(this);
     }
 
     @Permission("playertimers.command.resume")
-    @Command("ptimers resume <player> <name>")
+    @Command("timers player resume <player> <name>")
     @CommandDescription("Pauses the timer")
     public void cancelCommand(
             final CommandSender sender,

@@ -30,7 +30,7 @@ java {
 
 bukkit {
     name = "PlayerTimers"
-    main = "eu.virtusdevelops.playertimers.plugin.PlayerTimers"
+    main = "eu.virtusdevelops.playertimers.plugin.PlayerTimersPlugin"
     apiVersion = "1.20"
     foliaSupported = true
     authors = listOf("NeutralPlasma")

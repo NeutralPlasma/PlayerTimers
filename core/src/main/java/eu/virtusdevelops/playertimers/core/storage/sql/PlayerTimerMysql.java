@@ -24,12 +24,10 @@ public class PlayerTimerMysql implements PlayerTimerDao {
     private CommandMapperMysql commandMapperMysql;
 
     public PlayerTimerMysql(HikariDataSource dataSource,
-                            PlayerTimerMysqlMapper playerTimerMapperMysql,
-                            CommandMapperMysql commandMapperMysql,
                             Logger logger) {
         this.dataSource = dataSource;
-        this.playerTimerMapperMysql = playerTimerMapperMysql;
-        this.commandMapperMysql = commandMapperMysql;
+        this.playerTimerMapperMysql = new PlayerTimerMysqlMapper();
+        this.commandMapperMysql = new CommandMapperMysql();
         this.logger = logger;
     }
 
@@ -169,10 +167,7 @@ public class PlayerTimerMysql implements PlayerTimerDao {
             checkStatement.setString(1, playerTimer.getId().toString());
             var resultSet = checkStatement.executeQuery();
 
-            boolean exists = false;
-            if (resultSet.next() && resultSet.getInt("count") > 0) {
-                exists = true;
-            }
+            boolean exists = resultSet.next() && resultSet.getInt("count") > 0;
 
             if (exists) {
                 // Update the existing timer with the necessary fields

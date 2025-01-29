@@ -1,7 +1,10 @@
 package eu.virtusdevelops.playertimers.plugin;
 
+import eu.virtusdevelops.playertimers.api.PlayerTimers;
 import eu.virtusdevelops.playertimers.api.PlayerTimersAPI;
+import eu.virtusdevelops.playertimers.api.controllers.GlobalTimersController;
 import eu.virtusdevelops.playertimers.api.controllers.TimersController;
+import eu.virtusdevelops.playertimers.core.controllers.GlobalTimerControllerImpl;
 import eu.virtusdevelops.playertimers.core.controllers.TemplateController;
 import eu.virtusdevelops.playertimers.core.controllers.TimerControllerImpl;
 import eu.virtusdevelops.playertimers.plugin.commands.CommandsRegistry;
@@ -22,11 +25,12 @@ import org.incendo.cloud.paper.LegacyPaperCommandManager;
 
 import static net.kyori.adventure.text.Component.text;
 
-public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.playertimers.api.PlayerTimers {
+public final class PlayerTimersPlugin extends JavaPlugin implements PlayerTimers {
 
     private MinecraftHelp<CommandSender> minecraftHelp;
 
     private TimerControllerImpl timerController;
+    private GlobalTimerControllerImpl globalTimerController;
     private TemplateController templateController;
     private SQLStorage storage;
 
@@ -36,9 +40,12 @@ public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.
         try {
             storage = new SQLStorage(this);
         } catch (InvalidConfigurationException e) {
-            // throw error
+            Bukkit.getPluginManager().disablePlugin(this);
+
+            return;
         }
-        timerController = new TimerControllerImpl(this, storage);
+        timerController = new TimerControllerImpl(this, storage.getPlayerTimerDao());
+        globalTimerController = new GlobalTimerControllerImpl(this, storage.getGlobalTimerDao());
         templateController = new TemplateController(this);
         setupCommands();
 
@@ -52,7 +59,11 @@ public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.
 
     @Override
     public void onDisable() {
-        timerController.stop();
+        if(timerController != null && globalTimerController != null){
+            timerController.stop();
+            globalTimerController.stop();
+        }
+        PlayerTimersAPI.unload();
     }
 
 
@@ -84,7 +95,7 @@ public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.
         this.minecraftHelp = MinecraftHelp.<CommandSender>builder()
                 .commandManager(manager)
                 .audienceProvider(bukkitAudiences::sender)
-                .commandPrefix("/ptimers help")
+                .commandPrefix("/timers help")
                 .messageProvider(MinecraftHelp.captionMessageProvider(
                         manager.captionRegistry(),
                         ComponentCaptionFormatter.miniMessage()
@@ -104,6 +115,11 @@ public final class PlayerTimers extends JavaPlugin implements eu.virtusdevelops.
     @Override
     public TimersController getTimersController() {
         return timerController;
+    }
+
+    @Override
+    public GlobalTimersController getGlobalTimersController() {
+        return globalTimerController;
     }
 
     public TemplateController getTemplateController(){

@@ -60,4 +60,20 @@ public final class PlayerTimersAPI {
         implementation = api;
         isLoaded = true;
     }
+
+    /**
+     * Unloads the PlayerTimersAPI, resetting the API state.
+     *
+     * This method sets the API's loaded state to false and clears the current implementation
+     * reference. It is intended for internal use only and should not be invoked directly
+     * under normal circumstances.
+     *
+     * This is typically used during the plugin's disable process to ensure the API is
+     * properly unloaded and cleaned up.
+     */
+    @ApiStatus.Internal
+    public static void unload(){
+        isLoaded = false;
+        implementation = null;
+    }
 }

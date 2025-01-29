@@ -7,22 +7,30 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class LinkedPlayerImpl implements LinkedPlayer {
-    private final UUID uuid;
+    private final UUID id;
+    private final UUID player_id;
     private boolean executed;
 
-    public LinkedPlayerImpl(UUID uuid) {
-        this.uuid = uuid;
+    public LinkedPlayerImpl(UUID id, UUID player_id) {
+        this.id = id;
+        this.player_id = player_id;
         this.executed = false;
     }
 
-    public LinkedPlayerImpl(UUID uuid, boolean executed) {
-        this.uuid = uuid;
+    public LinkedPlayerImpl(UUID id, UUID uuid, boolean executed) {
+        this.id = id;
+        this.player_id = uuid;
         this.executed = executed;
     }
 
     @Override
-    public UUID getUuid() {
-        return uuid;
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public UUID getPlayer_id() {
+        return player_id;
     }
 
     @Override
@@ -37,6 +45,6 @@ public class LinkedPlayerImpl implements LinkedPlayer {
 
     @Override
     public Player getPlayer() {
-        return Bukkit.getPlayer(uuid);
+        return Bukkit.getPlayer(player_id);
     }
 }

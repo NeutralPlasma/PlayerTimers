@@ -17,15 +17,17 @@ public interface GlobalTimer {
 
     boolean isExecuted();
 
-    boolean isDependentExecuted();
+    boolean isPlayerExecuted();
+
+    void setExecuted(boolean executed);
 
     void addTime(long duration);
 
     void removeTime(long duration);
 
-    void pause();
+    boolean pause();
 
-    void resume();
+    boolean resume();
 
     void cancel();
 
@@ -33,24 +35,31 @@ public interface GlobalTimer {
 
     void tick();
 
+    long getStartTime();
+
+    long getEndTime();
+
+    boolean isPaused();
+
+
 
 
     // those will be executed as soon as timer ends
-    List<String> getIndependentCommands();
+    List<TimerCommand> getCommands();
 
-    void addIndependentCommand(String command);
+    void addCommand(String command);
 
-    void removeIndependentCommand(int index);
+    void removeCommand(int index);
 
 
 
     // those are linked to player so only get executed when player comes online
     // will be executed for each player separately
-    List<String> getCommands();
+    List<TimerCommand> getPlayerCommands();
 
-    void addCommand(String command);
+    void addPlayerCommand(String command);
 
-    void removeCommand(int index);
+    void removePlayerCommand(int index);
 
     void linkPlayer(UUID playerId);
 

@@ -2,19 +2,21 @@ package eu.virtusdevelops.playertimers.core.storage;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import eu.virtusdevelops.playertimers.core.storage.sql.GlobalTimerMysql;
 import eu.virtusdevelops.playertimers.core.storage.sql.PlayerTimerMysql;
-import eu.virtusdevelops.playertimers.core.storage.sql.mappers.CommandMapperMysql;
-import eu.virtusdevelops.playertimers.core.storage.sql.mappers.PlayerTimerMysqlMapper;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.slf4j.LoggerFactory;
 
 import java.util.logging.Logger;
 
 public class SQLStorage {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(SQLStorage.class);
     private final JavaPlugin plugin;
     private final Logger logger;
-    private HikariDataSource dataSource;
+    private final HikariDataSource dataSource;
     private PlayerTimerDao playerTimerDao;
+    private GlobalTimerDao globalTimerDao;
 
 
     public SQLStorage(JavaPlugin plugin) throws InvalidConfigurationException {
@@ -33,20 +35,28 @@ public class SQLStorage {
 
         this.dataSource = new HikariDataSource(hikariConfig);
 
-        setupDaos();
-        initDaos();
+        setupDAOs();
+        initDAOs();
     }
 
-    private void setupDaos(){
-        playerTimerDao = new PlayerTimerMysql(dataSource, new PlayerTimerMysqlMapper(), new CommandMapperMysql(), plugin.getLogger());
+    private void setupDAOs(){
+        logger.info("Setting up DAOs");
+        playerTimerDao = new PlayerTimerMysql(dataSource, plugin.getLogger());
+        globalTimerDao = new GlobalTimerMysql(dataSource, plugin.getLogger());
     }
 
 
-    private void initDaos(){
+    private void initDAOs(){
+        logger.info("Initializing DAOs");
         playerTimerDao.init();
+        globalTimerDao.init();
     }
 
     public PlayerTimerDao getPlayerTimerDao() {
         return playerTimerDao;
+    }
+
+    public GlobalTimerDao getGlobalTimerDao() {
+        return globalTimerDao;
     }
 }

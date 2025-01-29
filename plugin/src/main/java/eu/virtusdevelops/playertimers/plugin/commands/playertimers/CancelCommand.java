@@ -1,8 +1,9 @@
-package eu.virtusdevelops.playertimers.plugin.commands;
+package eu.virtusdevelops.playertimers.plugin.commands.playertimers;
 
 import eu.virtusdevelops.playertimers.api.controllers.TimersController;
 import eu.virtusdevelops.playertimers.api.timer.PlayerTimer;
-import eu.virtusdevelops.playertimers.plugin.PlayerTimers;
+import eu.virtusdevelops.playertimers.plugin.PlayerTimersPlugin;
+import eu.virtusdevelops.playertimers.plugin.commands.AbstractCommand;
 import eu.virtusdevelops.playertimers.plugin.utils.TextUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -17,18 +18,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PauseCommand implements AbstractCommand {
+public class CancelCommand implements AbstractCommand {
     private TimersController timerController;
 
     @Override
-    public void registerCommand(@NonNull PlayerTimers plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
+    public void registerCommand(@NonNull PlayerTimersPlugin plugin, @NotNull AnnotationParser<CommandSender> annotationParser) {
         timerController = plugin.getTimersController();
         annotationParser.parse(this);
     }
 
-    @Permission("playertimers.command.pause")
-    @Command("ptimers pause <player> <name>")
-    @CommandDescription("Pauses the timer")
+    @Permission("playertimers.command.cancel")
+    @Command("timers player cancel <player> <name>")
+    @CommandDescription("Cancels the timer (DOESN'T execute commands)")
     public void cancelCommand(
             final CommandSender sender,
             @Argument(value = "player", suggestions = "player") final String playerName,
@@ -47,11 +48,9 @@ public class PauseCommand implements AbstractCommand {
             sender.sendMessage(TextUtil.MM.deserialize("<red>Invalid timer!"));
             return;
         }
-        if(timerController.pauseTimer(timer)){
-            sender.sendMessage(TextUtil.MM.deserialize("<green>Paused timer"));
-        }else{
-            sender.sendMessage(TextUtil.MM.deserialize("<red>Timer is already paused"));
-        }
+        timerController.cancelTimer(timer);
+
+        sender.sendMessage(TextUtil.MM.deserialize("<green>Canceled timer"));
     }
 
 
@@ -70,7 +69,7 @@ public class PauseCommand implements AbstractCommand {
         var timers = timerController.getPlayerTimers(oPlayer.getUniqueId());
         if(timers == null)
             return Collections.emptyList();
-        return timers.stream().filter(it -> !it.isPaused()).map(PlayerTimer::getName).filter(it -> ((String) it).contains(input)).collect(Collectors.toList());
+        return timers.stream().map(PlayerTimer::getName).filter(it -> ((String) it).contains(input)).collect(Collectors.toList());
 
     }
 }
