@@ -58,7 +58,7 @@ public class PlaceholdersController extends PlaceholderExpansion {
                     if(timer != null){
                         return timer.getTotalDuration() + "";
                     }else{
-                        return "0";
+                        return "1";
                     }
                 }
                 case "parsed":{
@@ -90,7 +90,7 @@ public class PlaceholdersController extends PlaceholderExpansion {
         }else if(split[0].equalsIgnoreCase("global")){
             switch (split[1]){
                 case "time":{
-                    var timer = globalTimersController.getTimer(split[2]);
+                    var timer = globalTimersController.getActiveTimer(split[2]);
                     if(timer != null){
                         return timer.getDuration() + "";
                     }else{
@@ -98,22 +98,22 @@ public class PlaceholdersController extends PlaceholderExpansion {
                     }
                 }
                 case "total":{
-                    var timer = globalTimersController.getTimer(split[2]);
+                    var timer = globalTimersController.getActiveTimer(split[2]);
                     if(timer != null){
                         return timer.getTotalDuration() + "";
                     }else{
-                        return "0";
+                        return "1";
                     }
                 }
                 case "parsed":{
-                    var timer = globalTimersController.getTimer(split[2]);
+                    var timer = globalTimersController.getActiveTimer(split[2]);
                     if(timer != null){
                         return DurationFormatUtils.formatDuration(timer.getDuration() * 1000, "mm'm' ss's'", false);
                     }else{
                         return "0";
                     }
                 }case "totalparsed":{
-                    var timer = globalTimersController.getTimer(split[2]);
+                    var timer = globalTimersController.getActiveTimer(split[2]);
                     if(timer != null){
                         return DurationFormatUtils.formatDuration(timer.getTotalDuration() * 1000, "mm'm' ss's'", false);
                     }else{
@@ -121,7 +121,7 @@ public class PlaceholdersController extends PlaceholderExpansion {
                     }
                 }
                 case "status":{
-                    var timer = globalTimersController.getTimer(split[2]);
+                    var timer = globalTimersController.getActiveTimer(split[2]);
                     if(timer != null){
                         return timer.isPaused() ? "paused" : "running";
                     }else{

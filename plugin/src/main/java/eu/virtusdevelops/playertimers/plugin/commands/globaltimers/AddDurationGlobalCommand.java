@@ -32,7 +32,7 @@ public class AddDurationGlobalCommand implements AbstractCommand {
             @Argument(value = "name", suggestions = "timer_name") final String name,
             @Argument("duration") final long duration
     ){
-        var timer = timerController.getTimer(name);
+        var timer = timerController.getActiveTimer(name);
         if(timer == null){
             sender.sendMessage(TextUtil.MM.deserialize("<red>Invalid timer!"));
             return;

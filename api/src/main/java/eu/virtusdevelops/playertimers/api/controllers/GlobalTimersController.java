@@ -12,6 +12,8 @@ public interface GlobalTimersController {
 
     GlobalTimer getTimer(String name);
 
+    GlobalTimer getActiveTimer(String name);
+
     GlobalTimer getTimer(UUID uuid);
 
     GlobalTimer createTimer(String name, long duration);

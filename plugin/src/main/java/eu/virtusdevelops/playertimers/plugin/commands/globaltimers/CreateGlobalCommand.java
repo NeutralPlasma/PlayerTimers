@@ -26,7 +26,7 @@ public class CreateGlobalCommand implements AbstractCommand {
             final @Argument("name") @NonNull String name,
             final @Argument("duration") long duration
     ){
-        var timers = timerController.getTimer(name);
+        var timers = timerController.getActiveTimer(name);
         if(timers != null){
             sender.sendMessage(TextUtil.MM.deserialize("<red>Timer with that name already exists!"));
             return;

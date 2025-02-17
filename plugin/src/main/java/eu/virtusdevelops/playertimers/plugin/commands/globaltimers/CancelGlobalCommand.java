@@ -33,7 +33,7 @@ public class CancelGlobalCommand implements AbstractCommand {
             final CommandSender sender,
             @Argument(value = "name", suggestions = "timer_name") final String name
     ){
-        var timer = timerController.getTimer(name);
+        var timer = timerController.getActiveTimer(name);
         if(timer == null){
             sender.sendMessage(TextUtil.MM.deserialize("<red>Invalid timer!"));
             return;

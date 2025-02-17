@@ -34,7 +34,7 @@ public class CheckGlobalCommand implements AbstractCommand {
 
 
 
-        var timer = timerController.getTimer(timerName);
+        var timer = timerController.getActiveTimer(timerName);
         if(timer == null){
             sender.sendMessage(TextUtil.MM.deserialize("<red>Invalid timer!"));
             return;

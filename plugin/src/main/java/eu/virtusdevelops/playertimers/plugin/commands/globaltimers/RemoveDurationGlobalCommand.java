@@ -35,7 +35,7 @@ public class RemoveDurationGlobalCommand implements AbstractCommand {
 
 
 
-        var timer = timerController.getTimer(name);
+        var timer = timerController.getActiveTimer(name);
         if(timer == null){
             sender.sendMessage(TextUtil.MM.deserialize("<red>Invalid timer!"));
             return;

@@ -132,6 +132,14 @@ public class GlobalTimerControllerImpl implements GlobalTimersController {
     }
 
     @Override
+    public GlobalTimer getActiveTimer(String name) {
+        for(GlobalTimer timer : activeTimers.values()){
+            if(timer.getName().equals(name) && !timer.isExecuted()) return timer;
+        }
+        return null;
+    }
+
+    @Override
     public GlobalTimer getTimer(UUID uuid) {
         if(activeTimers.containsKey(uuid)) return activeTimers.get(uuid);
         return null;
